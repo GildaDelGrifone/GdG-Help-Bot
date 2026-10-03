@@ -8,9 +8,9 @@ Sentiti libero/a di presentarti e dare un'occhiata a quello a cui stiamo giocand
 📍 <i>Aperture e come partecipare</i>
 • 🕒 <b>Quando:</b> Lunedì, Mercoledì e Venerdì (20:45 – 00:00)
 • 📌 <b>Dove:</b> Via Ada Negri 8/A, 10136 Torino (TO)
-• 🎲 <b>Eventi:</b> Tieni d'occhio questo gruppo o il canale <a href="https://t.me/Gildadelgrifonetorino">Eventi</a> per iscriverti ai tavoli!
+• 🎲 <b>Eventi:</b> Tieni d'occhio questo gruppo o il canale <a href="https://t.me/Gildadelgrifonetorino">Eventi</a> per iscriverti ai tavoli! 
+Inoltre puoi usare <a href="https://t.me/GdG_Event_bot?start=event_next">/event_next</a> per scoprire i prossimi appuntamenti.
 ✨ <i>La prima serata in associazione è sempre gratuita!</i>
-
 ---
 💡 <i>Hai domande sulle nostre attività?</i>
 Chiedi pure qui nel gruppo oppure avvia {bot_username} in privato per FAQ, serate, tesseramento e supporto diretto!
