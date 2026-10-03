@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-09-23T23:11:35.995429+00:00",
+  "generated_at": "2026-09-25T14:52:38.851764+00:00",
   "categories": [
     {
       "id": "48c89781",
@@ -8,11 +8,29 @@
       "path": "FAQ/Iscrizioni e Tesseramento",
       "files": [
         {
-          "id": "ef5c5623",
-          "title": "A cosa serve la tessera?",
-          "filename": "A cosa serve la tessera?.md",
-          "path": "FAQ/Iscrizioni e Tesseramento/A cosa serve la tessera?.md",
-          "preview": "La quota associativa annuale della Gilda del Grifone è di <b€20</b.",
+          "id": "c5aa1004",
+          "title": "Come posso iscrivermi alla Gilda?",
+          "filename": "Come posso iscrivermi alla Gilda?.md",
+          "path": "FAQ/Iscrizioni e Tesseramento/Come posso iscrivermi alla Gilda?.md",
+          "preview": "Iscriversi alla Gilda del Grifone è semplicissimo!",
+          "keywords": [
+            "iscriversi",
+            "iscrizione",
+            "modulo",
+            "associarsi",
+            "diventare socio",
+            "tessera",
+            "tesseramento",
+            "socio",
+            "quota"
+          ]
+        },
+        {
+          "id": "fb797c14",
+          "title": "Costi e Tessera associativa",
+          "filename": "Costi e Tessera associativa.md",
+          "path": "FAQ/Iscrizioni e Tesseramento/Costi e Tessera associativa.md",
+          "preview": "La quota associativa annuale della Gilda del Grifone è di <b€20</b (valida 365 giorni dal momento dell'iscrizione).",
           "keywords": [
             "costo",
             "prezzo",
@@ -27,23 +45,9 @@
             "spesa",
             "soldi",
             "tessera",
-            "iscrizione"
-          ]
-        },
-        {
-          "id": "c5aa1004",
-          "title": "Come posso iscrivermi alla Gilda?",
-          "filename": "Come posso iscrivermi alla Gilda?.md",
-          "path": "FAQ/Iscrizioni e Tesseramento/Come posso iscrivermi alla Gilda?.md",
-          "preview": "Iscriversi alla Gilda del Grifone è semplicissimo!",
-          "keywords": [
-            "iscriversi",
             "iscrizione",
-            "modulo",
-            "associarsi",
-            "diventare socio",
-            "tessera",
-            "tesseramento"
+            "a cosa serve la tessera",
+            "vantaggi"
           ]
         }
       ]
@@ -64,7 +68,7 @@
           "title": "Regolamento dell'associazione",
           "filename": "Regolamento dell'associazione.md",
           "path": "FAQ/Regolamento/Regolamento dell'associazione.md",
-          "preview": "Per garantire a tutti un'esperienza piacevole e serena, chiediamo a tutti i frequentatori della Gilda di seguire queste semplici regole:",
+          "preview": "Per garantire a tutti un'esperienza piacevole, divertente e serena, chiediamo a tutti i soci e frequentatori della Gilda di rispettare queste semplici norme di ...",
           "keywords": [
             "regole",
             "regolamento",
@@ -72,7 +76,10 @@
             "norme",
             "comportamento",
             "statuto",
-            "disciplina"
+            "disciplina",
+            "rispetto",
+            "ludoteca",
+            "soci"
           ]
         }
       ]
@@ -83,11 +90,31 @@
       "path": "FAQ/Serate e Eventi",
       "files": [
         {
+          "id": "8b46a2e0",
+          "title": "Come partecipare",
+          "filename": "Come partecipare.md",
+          "path": "FAQ/Serate e Eventi/Come partecipare.md",
+          "preview": "Per partecipare agli eventi, entra nel gruppo Telegram principale nel canale dedicato agli eventi e tieni d'occhio le nuove proposte pubblicate periodicamente.",
+          "keywords": [
+            "partecipare",
+            "eventi",
+            "prenotazione",
+            "prenotare",
+            "serate",
+            "master",
+            "proporre evento",
+            "tavoli",
+            "amici",
+            "prima volta",
+            "prova"
+          ]
+        },
+        {
           "id": "d3f45437",
           "title": "Dove e quando ci troviamo?",
           "filename": "Dove e quando ci troviamo?.md",
           "path": "FAQ/Serate e Eventi/Dove e quando ci troviamo?.md",
-          "preview": "🎲 <bOgni Lunedì, Mercoledì e Venerdì:</b Dalle ore 20:45 fino a mezzanotte.",
+          "preview": "🎲 <bOgni Lunedì, Mercoledì e Venerdì:</b dalle ore 20:45 a mezzanotte.",
           "keywords": [
             "sede",
             "indirizzo",
@@ -98,7 +125,9 @@
             "giorni",
             "mappa",
             "arrivo",
-            "apertura"
+            "apertura",
+            "parcheggio",
+            "torino"
           ]
         }
       ]
@@ -119,7 +148,10 @@
         "info",
         "scopo",
         "giochi da tavolo",
-        "gdr"
+        "gdr",
+        "gilda",
+        "orari",
+        "costi"
       ]
     }
   ]

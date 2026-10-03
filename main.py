@@ -15,6 +15,7 @@ from telegram import (
     InlineKeyboardMarkup,
 )
 from telegram.constants import ParseMode
+from telegram.error import NetworkError, TimedOut
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
@@ -81,7 +82,7 @@ def build_main_menu_keyboard() -> InlineKeyboardMarkup:
         [InlineKeyboardButton("📚 Consulta le FAQ", callback_data="menu_browse")],
         [InlineKeyboardButton("🔍 Cerca una Risposta", callback_data="menu_search_prompt")],
         [InlineKeyboardButton("🎫 Apri un Ticket", callback_data="menu_open_ticket")],
-        [InlineKeyboardButton("👥 Contatta gli Admin", callback_data="menu_admins")],
+        [InlineKeyboardButton("👥 List admin e direttivo", callback_data="menu_admins")],
     ]
     return InlineKeyboardMarkup(keyboard)
 
@@ -140,6 +141,27 @@ async def handle_new_chat_members(update: Update, context: ContextTypes.DEFAULT_
 # ===================================================================
 # Private Chat: Basic Commands
 # ===================================================================
+
+async def cmd_welcome(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Sends the welcome message for debugging purposes."""
+    message = update.effective_message or update.message
+    if not message:
+        return
+
+    user = update.effective_user
+    user_name = html.escape(user.full_name) if user else "Utente"
+    greeting_template = await faq_manager.get_template("greeting.md")
+
+    text = greeting_template.replace("{user_name}", user_name)
+    text = text.replace("{bot_username}", config.BOT_USERNAME)
+    formatted_text = format_telegram_html(text)
+
+    await message.reply_text(
+        text=formatted_text,
+        parse_mode=ParseMode.HTML,
+        disable_web_page_preview=True,
+    )
+
 
 async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Sends the welcome message and main menu."""
@@ -701,6 +723,15 @@ async def cmd_admin_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
+async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handles and logs errors, suppressing noisy tracebacks for temporary network issues."""
+    if isinstance(context.error, (NetworkError, TimedOut)):
+        logger.warning("Temporary Telegram network error: %s", context.error)
+        return
+
+    logger.error("Exception while handling update %s:", update, exc_info=context.error)
+
+
 # ===================================================================
 # Main Bot Initialization
 # ===================================================================
@@ -726,7 +757,11 @@ def main():
     # Build Telegram Bot application
     app = ApplicationBuilder().token(config.TELEGRAM_BOT_TOKEN).build()
 
+    # Register Error Handler
+    app.add_error_handler(error_handler)
+
     # Register Command Handlers
+    app.add_handler(CommandHandler("welcome", cmd_welcome))
     app.add_handler(CommandHandler(["start", "menu"], cmd_start))
     app.add_handler(CommandHandler("help", cmd_help))
     app.add_handler(CommandHandler(["admin", "admins"], cmd_admin))

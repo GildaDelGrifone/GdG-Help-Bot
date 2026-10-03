@@ -40,4 +40,4 @@ Se vuoi proporre o organizzare un evento, contatta direttamente uno dei nostri r
 • Contatto: <a href="https://t.me/ManueleAbi">@ManueleAbi</a>
 
 ---
-ℹ️ <i>Suggerimento:</i> Se hai una domanda specifica per cui non trovi risposta nelle FAQ, puoi anche usare il pulsante <b>"🎫 Apri un Ticket"</b> per inviare una notifica a tutti gli admin contemporaneamente!
+ℹ️ <i>Suggerimento:</i> Se hai una domanda specifica per cui non trovi risposta nelle FAQ, puoi anche usare il pulsante <b>"🎫 Apri un Ticket"</b> per inviare una notifica ai manutentori del bot!
