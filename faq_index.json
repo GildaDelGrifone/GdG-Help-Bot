@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-09-25T14:52:38.851764+00:00",
+  "generated_at": "2026-10-03T22:22:24.843611+00:00",
   "categories": [
     {
       "id": "48c89781",
@@ -20,17 +20,15 @@
             "associarsi",
             "diventare socio",
             "tessera",
-            "tesseramento",
-            "socio",
-            "quota"
+            "tesseramento"
           ]
         },
         {
           "id": "fb797c14",
-          "title": "Costi e Tessera associativa",
+          "title": "A cosa serve la tessera?",
           "filename": "Costi e Tessera associativa.md",
           "path": "FAQ/Iscrizioni e Tesseramento/Costi e Tessera associativa.md",
-          "preview": "La quota associativa annuale della Gilda del Grifone è di <b€20</b (valida 365 giorni dal momento dell'iscrizione).",
+          "preview": "La quota associativa annuale della Gilda del Grifone è di <b€20</b.",
           "keywords": [
             "costo",
             "prezzo",
@@ -45,9 +43,7 @@
             "spesa",
             "soldi",
             "tessera",
-            "iscrizione",
-            "a cosa serve la tessera",
-            "vantaggi"
+            "iscrizione"
           ]
         }
       ]
@@ -68,7 +64,7 @@
           "title": "Regolamento dell'associazione",
           "filename": "Regolamento dell'associazione.md",
           "path": "FAQ/Regolamento/Regolamento dell'associazione.md",
-          "preview": "Per garantire a tutti un'esperienza piacevole, divertente e serena, chiediamo a tutti i soci e frequentatori della Gilda di rispettare queste semplici norme di ...",
+          "preview": "Per garantire a tutti un'esperienza piacevole e serena, chiediamo a tutti i frequentatori della Gilda di seguire queste semplici regole:",
           "keywords": [
             "regole",
             "regolamento",
@@ -76,10 +72,7 @@
             "norme",
             "comportamento",
             "statuto",
-            "disciplina",
-            "rispetto",
-            "ludoteca",
-            "soci"
+            "disciplina"
           ]
         }
       ]
@@ -94,27 +87,15 @@
           "title": "Come partecipare",
           "filename": "Come partecipare.md",
           "path": "FAQ/Serate e Eventi/Come partecipare.md",
-          "preview": "Per partecipare agli eventi, entra nel gruppo Telegram principale nel canale dedicato agli eventi e tieni d'occhio le nuove proposte pubblicate periodicamente.",
-          "keywords": [
-            "partecipare",
-            "eventi",
-            "prenotazione",
-            "prenotare",
-            "serate",
-            "master",
-            "proporre evento",
-            "tavoli",
-            "amici",
-            "prima volta",
-            "prova"
-          ]
+          "preview": "Per partecipare agli eventi, entra nel gruppo principale nel il canale degli eventi e tieni d'occhio la pubblicazione di nuovi eventi.",
+          "keywords": []
         },
         {
           "id": "d3f45437",
           "title": "Dove e quando ci troviamo?",
           "filename": "Dove e quando ci troviamo?.md",
           "path": "FAQ/Serate e Eventi/Dove e quando ci troviamo?.md",
-          "preview": "🎲 <bOgni Lunedì, Mercoledì e Venerdì:</b dalle ore 20:45 a mezzanotte.",
+          "preview": "🎲 <bOgni Lunedì, Mercoledì e Venerdì:</b Dalle ore 20:45 fino a mezzanotte.",
           "keywords": [
             "sede",
             "indirizzo",
@@ -125,9 +106,7 @@
             "giorni",
             "mappa",
             "arrivo",
-            "apertura",
-            "parcheggio",
-            "torino"
+            "apertura"
           ]
         }
       ]
@@ -148,10 +127,7 @@
         "info",
         "scopo",
         "giochi da tavolo",
-        "gdr",
-        "gilda",
-        "orari",
-        "costi"
+        "gdr"
       ]
     }
   ]
