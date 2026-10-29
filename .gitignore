@@ -29,6 +29,7 @@ MANIFEST
 # Virtual Environments
 venv/
 .venv/
+.venv-k8s/
 env/
 ENV/
 env.bak/
