@@ -163,8 +163,218 @@ async def cmd_welcome(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+# ===================================================================
+# Private-chat redirection (keeps FAQ traffic out of groups)
+# ===================================================================
+
+GROUP_REDIRECT_DELETE_AFTER = 120  # seconds before the "open in private" hint is removed from a group
+
+CALLBACK_START_PAYLOADS = {
+    "menu_main": "menu",
+    "menu_browse": "browse",
+    "menu_search_prompt": "search",
+    "menu_admins": "admins",
+    "menu_open_ticket": "ticket",
+}
+
+
+def is_private_chat(update: Update) -> bool:
+    chat = update.effective_chat
+    return bool(chat and chat.type == "private")
+
+
+def private_chat_url(context: ContextTypes.DEFAULT_TYPE, payload: str = "") -> str:
+    """Deep link that opens the bot's private chat, optionally with a /start payload."""
+    username = context.bot.username or config.BOT_USERNAME.lstrip("@")
+    return f"https://t.me/{username}" + (f"?start={payload}" if payload else "")
+
+
+def callback_to_start_payload(data: str) -> str:
+    """Maps a menu callback to the /start payload that opens the same view in private."""
+    if data.startswith("cat:"):
+        return f"cat_{data.split(':', 1)[1]}"
+    if data.startswith("faq:"):
+        return f"faq_{data.split(':', 1)[1]}"
+    return CALLBACK_START_PAYLOADS.get(data, "menu")
+
+
+async def _delete_message_job(context: ContextTypes.DEFAULT_TYPE):
+    chat_id, message_id = context.job.data
+    try:
+        await context.bot.delete_message(chat_id=chat_id, message_id=message_id)
+    except Exception as e:
+        logger.debug("Could not delete redirect message %s in %s: %s", message_id, chat_id, e)
+
+
+async def redirect_to_private(update: Update, context: ContextTypes.DEFAULT_TYPE, payload: str = "menu"):
+    """Answers a command sent in a group with a short, self-deleting button to the private chat."""
+    message = update.effective_message
+    if not message:
+        return
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("💬 Apri il bot in privato", url=private_chat_url(context, payload))]
+    ])
+    sent = await message.reply_text(
+        text="📬 Per non intasare il gruppo rispondo solo in chat privata: premi il pulsante qui sotto!",
+        reply_markup=keyboard,
+    )
+    if context.job_queue:
+        context.job_queue.run_once(
+            _delete_message_job, GROUP_REDIRECT_DELETE_AFTER, data=(sent.chat_id, sent.message_id)
+        )
+
+
+# ===================================================================
+# Views shared by commands, deep links and menu buttons
+# ===================================================================
+
+def build_main_menu_view() -> tuple[str, InlineKeyboardMarkup]:
+    text = (
+        "🎲 <b>Menu Principale - Gilda del Grifone</b> 🦅\n\n"
+        "Come possiamo aiutarti?\n"
+        "• Sfoglia o cerca nelle <b>FAQ</b>\n"
+        "• <b>Apri un ticket</b> di supporto\n"
+        "• Consulta i contatti <b>Admin</b>"
+    )
+    return text, build_main_menu_keyboard()
+
+
+async def build_browse_view() -> tuple[str, InlineKeyboardMarkup]:
+    index = await faq_manager.get_faq_index()
+    keyboard = []
+    for cat in index.get("categories", []):
+        keyboard.append([InlineKeyboardButton(f"📁 {cat['name']}", callback_data=f"cat:{cat['id']}")])
+    for root_file in index.get("root_files", []):
+        keyboard.append([InlineKeyboardButton(f"📄 {root_file['title']}", callback_data=f"faq:{root_file['id']}")])
+    keyboard.append([InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")])
+    return "📚 <b>Seleziona una categoria o una domanda:</b>", InlineKeyboardMarkup(keyboard)
+
+
+async def build_category_view(cat_id: str) -> Optional[tuple[str, InlineKeyboardMarkup]]:
+    category = await faq_manager.get_category_by_id(cat_id)
+    if not category:
+        return None
+    keyboard = [
+        [InlineKeyboardButton(f"📄 {f['title']}", callback_data=f"faq:{f['id']}")]
+        for f in category.get("files", [])
+    ]
+    keyboard.append([InlineKeyboardButton("🔙 Tutte le Categorie", callback_data="menu_browse")])
+    keyboard.append([InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")])
+    text = f"📁 <b>Categoria: {html.escape(category['name'])}</b>\n\nScegli una domanda da consultare:"
+    return text, InlineKeyboardMarkup(keyboard)
+
+
+async def send_faq_answer(message, faq_id: str):
+    """Sends one FAQ (images first, then the text) as a reply to `message`."""
+    faq_item = await faq_manager.get_faq_by_id(faq_id)
+    if not faq_item:
+        await message.reply_text("FAQ non trovata.", reply_markup=build_main_menu_keyboard())
+        return
+
+    content, images = await faq_manager.load_faq_file(faq_item["path"])
+
+    for img in images:
+        try:
+            if img.startswith("http://") or img.startswith("https://"):
+                await message.reply_photo(photo=img)
+            elif os.path.exists(img):
+                with open(img, "rb") as photo_file:
+                    await message.reply_photo(photo=photo_file)
+        except Exception as e:
+            logger.warning("Could not send photo %s: %s", img, e)
+
+    keyboard = [
+        [InlineKeyboardButton("📚 Torna alle FAQ", callback_data="menu_browse")],
+        [InlineKeyboardButton("🎫 Apri un Ticket", callback_data="menu_open_ticket")],
+        [InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")],
+    ]
+    await message.reply_text(
+        text=format_telegram_html(content),
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=ParseMode.HTML,
+        disable_web_page_preview=True,
+    )
+
+
+async def send_admins(message):
+    admin_text = await faq_manager.get_template("admins.md")
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🎫 Apri un Ticket", callback_data="menu_open_ticket")],
+        [InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")],
+    ])
+    await message.reply_text(
+        text=format_telegram_html(admin_text),
+        reply_markup=keyboard,
+        parse_mode=ParseMode.HTML,
+        disable_web_page_preview=True,
+    )
+
+
+async def send_search_prompt(message):
+    prompt_text = (
+        "🔍 <b>Ricerca nelle FAQ:</b>\n\n"
+        "Scrivi semplicemente qui in chat una parola o la tua domanda (es. <i>iscrizione</i>, <i>quota</i>, <i>sede</i>, <i>orari</i>) "
+        "e cercherò per te le risposte più pertinenti!\n\n"
+        "Oppure clicca sotto per tornare al menu."
+    )
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("📚 Sfoglia tutte le FAQ", callback_data="menu_browse")],
+        [InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")],
+    ])
+    await message.reply_text(text=prompt_text, reply_markup=keyboard, parse_mode=ParseMode.HTML)
+
+
+async def start_ticket(message, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["waiting_for_ticket"] = True
+    prompt = (
+        "🎫 <b>Apertura Ticket di Supporto</b>\n\n"
+        "Scrivi qui sotto in un unico messaggio la tua domanda o richiesta per lo staff della Gilda del Grifone.\n\n"
+        "<i>(Se vuoi annullare, digita /annulla)</i>"
+    )
+    await message.reply_text(text=prompt, parse_mode=ParseMode.HTML)
+
+
+async def _edit_or_reply(query, text: str, keyboard: InlineKeyboardMarkup):
+    try:
+        await query.edit_message_text(text=text, reply_markup=keyboard, parse_mode=ParseMode.HTML)
+    except Exception:
+        await query.message.reply_text(text=text, reply_markup=keyboard, parse_mode=ParseMode.HTML)
+
+
+# ===================================================================
+# Commands
+# ===================================================================
+
 async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Sends the welcome message and main menu."""
+    """Sends the welcome message and main menu, or the view requested by a deep link (/start <payload>)."""
+    payload = context.args[0] if context.args else ""
+    if not is_private_chat(update):
+        await redirect_to_private(update, context, payload or "menu")
+        return
+
+    message = update.message
+    if payload == "browse":
+        text, keyboard = await build_browse_view()
+        await message.reply_text(text=text, reply_markup=keyboard, parse_mode=ParseMode.HTML)
+        return
+    if payload.startswith("cat_"):
+        view = await build_category_view(payload[len("cat_"):])
+        if view:
+            await message.reply_text(text=view[0], reply_markup=view[1], parse_mode=ParseMode.HTML)
+            return
+    if payload.startswith("faq_"):
+        await send_faq_answer(message, payload[len("faq_"):])
+        return
+    if payload == "admins":
+        await send_admins(message)
+        return
+    if payload == "ticket":
+        await start_ticket(message, context)
+        return
+    if payload == "search":
+        await send_search_prompt(message)
+        return
+
     user = update.effective_user
     welcome_text = (
         f"🎲 <b>Benvenuto/a {html.escape(user.first_name)} nel Bot di Supporto della Gilda del Grifone!</b> 🦅\n\n"
@@ -174,16 +384,18 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "• <b>Aprire un ticket</b> per chiedere qualcosa agli organizzatori.\n"
         "• Consultare i contatti degli <b>Admin</b>."
     )
-    keyboard = build_main_menu_keyboard()
-    await update.message.reply_text(
+    await message.reply_text(
         text=welcome_text,
-        reply_markup=keyboard,
+        reply_markup=build_main_menu_keyboard(),
         parse_mode=ParseMode.HTML,
     )
 
 
 async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Sends helpful usage instructions."""
+    if not is_private_chat(update):
+        await redirect_to_private(update, context, "menu")
+        return
     help_text = (
         "ℹ️ <b>Guida ai comandi del Bot della Gilda:</b>\n\n"
         "/start o /menu - Mostra il menu principale\n"
@@ -201,34 +413,25 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def cmd_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Shows the admins template."""
-    admin_text = await faq_manager.get_template("admins.md")
-    formatted_admin = format_telegram_html(admin_text)
-    keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🎫 Apri un Ticket", callback_data="menu_open_ticket")],
-        [InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")],
-    ])
-    await update.message.reply_text(
-        text=formatted_admin,
-        reply_markup=keyboard,
-        parse_mode=ParseMode.HTML,
-        disable_web_page_preview=True,
-    )
+    if not is_private_chat(update):
+        await redirect_to_private(update, context, "admins")
+        return
+    await send_admins(update.message)
 
 
 async def cmd_ticket(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Initiates opening a ticket via command."""
-    context.user_data["waiting_for_ticket"] = True
-    text = (
-        "🎫 <b>Apertura Ticket di Supporto</b>\n\n"
-        "Scrivi qui sotto in un unico messaggio la tua domanda o richiesta per lo staff della Gilda del Grifone.\n\n"
-        "<i>(Se vuoi annullare, digita /annulla)</i>"
-    )
-    await update.message.reply_text(text=text, parse_mode=ParseMode.HTML)
-
+    if not is_private_chat(update):
+        await redirect_to_private(update, context, "ticket")
+        return
+    await start_ticket(update.message, context)
 
 
 async def cmd_annulla(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Cancels current pending action."""
+    if not is_private_chat(update):
+        await redirect_to_private(update, context, "menu")
+        return
     if context.user_data.get("waiting_for_ticket"):
         context.user_data["waiting_for_ticket"] = False
         await update.message.reply_text(
@@ -248,167 +451,49 @@ async def cmd_annulla(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Router for all inline keyboard callback queries."""
     query = update.callback_query
-    await query.answer()
-
     data = query.data or ""
 
+    # Ticket buttons live in the admin chat and are handled there
+    if data.startswith("ticket_"):
+        await query.answer()
+        await handle_admin_ticket_callback(update, context)
+        return
+
+    # Menu buttons pressed in a group open the same view in the private chat instead
+    chat = query.message.chat if query.message else None
+    if not chat or chat.type != "private":
+        await query.answer(url=private_chat_url(context, callback_to_start_payload(data)))
+        return
+
+    await query.answer()
+
     if data == "menu_main":
-        welcome_text = (
-            "🎲 <b>Menu Principale - Gilda del Grifone</b> 🦅\n\n"
-            "Come possiamo aiutarti?\n"
-            "• Sfoglia o cerca nelle <b>FAQ</b>\n"
-            "• <b>Apri un ticket</b> di supporto\n"
-            "• Consulta i contatti <b>Admin</b>"
-        )
-        try:
-            await query.edit_message_text(
-                text=welcome_text,
-                reply_markup=build_main_menu_keyboard(),
-                parse_mode=ParseMode.HTML,
-            )
-        except Exception:
-            await query.message.reply_text(
-                text=welcome_text,
-                reply_markup=build_main_menu_keyboard(),
-                parse_mode=ParseMode.HTML,
-            )
+        text, keyboard = build_main_menu_view()
+        await _edit_or_reply(query, text, keyboard)
 
     elif data == "menu_browse":
-        index = await faq_manager.get_faq_index()
-        keyboard = []
-
-        # Categories
-        for cat in index.get("categories", []):
-            keyboard.append([
-                InlineKeyboardButton(f"📁 {cat['name']}", callback_data=f"cat:{cat['id']}")
-            ])
-
-        # Root files
-        for root_file in index.get("root_files", []):
-            keyboard.append([
-                InlineKeyboardButton(f"📄 {root_file['title']}", callback_data=f"faq:{root_file['id']}")
-            ])
-
-        keyboard.append([InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")])
-
-        browse_text = "📚 <b>Seleziona una categoria o una domanda:</b>"
-        try:
-            await query.edit_message_text(
-                text=browse_text,
-                reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode=ParseMode.HTML,
-            )
-        except Exception:
-            await query.message.reply_text(
-                text=browse_text,
-                reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode=ParseMode.HTML,
-            )
+        text, keyboard = await build_browse_view()
+        await _edit_or_reply(query, text, keyboard)
 
     elif data == "menu_search_prompt":
-        prompt_text = (
-            "🔍 <b>Ricerca nelle FAQ:</b>\n\n"
-            "Scrivi semplicemente qui in chat una parola o la tua domanda (es. <i>iscrizione</i>, <i>quota</i>, <i>sede</i>, <i>orari</i>) "
-            "e cercherò per te le risposte più pertinenti!\n\n"
-            "Oppure clicca sotto per tornare al menu."
-        )
-        keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("📚 Sfoglia tutte le FAQ", callback_data="menu_browse")],
-            [InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")],
-        ])
-        await query.message.reply_text(text=prompt_text, reply_markup=keyboard, parse_mode=ParseMode.HTML)
+        await send_search_prompt(query.message)
 
     elif data == "menu_admins":
-        admin_text = await faq_manager.get_template("admins.md")
-        formatted_admin = format_telegram_html(admin_text)
-        keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🎫 Apri un Ticket", callback_data="menu_open_ticket")],
-            [InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")],
-        ])
-        await query.message.reply_text(
-            text=formatted_admin,
-            reply_markup=keyboard,
-            parse_mode=ParseMode.HTML,
-            disable_web_page_preview=True,
-        )
+        await send_admins(query.message)
 
     elif data == "menu_open_ticket":
-        context.user_data["waiting_for_ticket"] = True
-        prompt = (
-            "🎫 <b>Apertura Ticket di Supporto</b>\n\n"
-            "Scrivi qui sotto in un messaggio la tua domanda o richiesta per lo staff della Gilda.\n\n"
-            "<i>(Invia /annulla per uscire senza inviare il ticket)</i>"
-        )
-        await query.message.reply_text(text=prompt, parse_mode=ParseMode.HTML)
+        await start_ticket(query.message, context)
 
     elif data.startswith("cat:"):
-        cat_id = data.split(":", 1)[1]
-        category = await faq_manager.get_category_by_id(cat_id)
-        if not category:
+        view = await build_category_view(data.split(":", 1)[1])
+        if not view:
             await query.message.reply_text("Categoria non trovata.", reply_markup=build_main_menu_keyboard())
             return
-
-        keyboard = []
-        for f in category.get("files", []):
-            keyboard.append([
-                InlineKeyboardButton(f"📄 {f['title']}", callback_data=f"faq:{f['id']}")
-            ])
-
-        keyboard.append([InlineKeyboardButton("🔙 Tutte le Categorie", callback_data="menu_browse")])
-        keyboard.append([InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")])
-
-        cat_text = f"📁 <b>Categoria: {html.escape(category['name'])}</b>\n\nScegli una domanda da consultare:"
-        try:
-            await query.edit_message_text(
-                text=cat_text,
-                reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode=ParseMode.HTML,
-            )
-        except Exception:
-            await query.message.reply_text(
-                text=cat_text,
-                reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode=ParseMode.HTML,
-            )
+        await _edit_or_reply(query, view[0], view[1])
 
     elif data.startswith("faq:"):
-        faq_id = data.split(":", 1)[1]
-        faq_item = await faq_manager.get_faq_by_id(faq_id)
-        if not faq_item:
-            await query.message.reply_text("FAQ non trovata.", reply_markup=build_main_menu_keyboard())
-            return
+        await send_faq_answer(query.message, data.split(":", 1)[1])
 
-        content, images = await faq_manager.load_faq_file(faq_item["path"])
-
-        # Send any associated images first
-        for img in images:
-            try:
-                if img.startswith("http://") or img.startswith("https://"):
-                    await query.message.reply_photo(photo=img)
-                elif os.path.exists(img):
-                    with open(img, "rb") as photo_file:
-                        await query.message.reply_photo(photo=photo_file)
-            except Exception as e:
-                logger.warning("Could not send photo %s: %s", img, e)
-
-        # Build buttons below the answer
-        keyboard = [
-            [InlineKeyboardButton("📚 Torna alle FAQ", callback_data="menu_browse")],
-            [InlineKeyboardButton("🎫 Apri un Ticket", callback_data="menu_open_ticket")],
-            [InlineKeyboardButton("🏠 Menu Principale", callback_data="menu_main")],
-        ]
-
-        formatted_content = format_telegram_html(content)
-        await query.message.reply_text(
-            text=formatted_content,
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode=ParseMode.HTML,
-            disable_web_page_preview=True,
-        )
-
-
-    elif data.startswith("ticket_"):
-        await handle_admin_ticket_callback(update, context)
 
 # ===================================================================
 # Support Ticket Formatting & Helpers
