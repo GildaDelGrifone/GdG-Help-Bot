@@ -164,10 +164,8 @@ async def cmd_welcome(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 # ===================================================================
-# Private-chat redirection (keeps FAQ traffic out of groups)
+# Private-chat only: in groups the bot just posts the welcome message
 # ===================================================================
-
-GROUP_REDIRECT_DELETE_AFTER = 120  # seconds before the "open in private" hint is removed from a group
 
 CALLBACK_START_PAYLOADS = {
     "menu_main": "menu",
@@ -176,11 +174,6 @@ CALLBACK_START_PAYLOADS = {
     "menu_admins": "admins",
     "menu_open_ticket": "ticket",
 }
-
-
-def is_private_chat(update: Update) -> bool:
-    chat = update.effective_chat
-    return bool(chat and chat.type == "private")
 
 
 def private_chat_url(context: ContextTypes.DEFAULT_TYPE, payload: str = "") -> str:
@@ -196,32 +189,6 @@ def callback_to_start_payload(data: str) -> str:
     if data.startswith("faq:"):
         return f"faq_{data.split(':', 1)[1]}"
     return CALLBACK_START_PAYLOADS.get(data, "menu")
-
-
-async def _delete_message_job(context: ContextTypes.DEFAULT_TYPE):
-    chat_id, message_id = context.job.data
-    try:
-        await context.bot.delete_message(chat_id=chat_id, message_id=message_id)
-    except Exception as e:
-        logger.debug("Could not delete redirect message %s in %s: %s", message_id, chat_id, e)
-
-
-async def redirect_to_private(update: Update, context: ContextTypes.DEFAULT_TYPE, payload: str = "menu"):
-    """Answers a command sent in a group with a short, self-deleting button to the private chat."""
-    message = update.effective_message
-    if not message:
-        return
-    keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("💬 Apri il bot in privato", url=private_chat_url(context, payload))]
-    ])
-    sent = await message.reply_text(
-        text="📬 Per non intasare il gruppo rispondo solo in chat privata: premi il pulsante qui sotto!",
-        reply_markup=keyboard,
-    )
-    if context.job_queue:
-        context.job_queue.run_once(
-            _delete_message_job, GROUP_REDIRECT_DELETE_AFTER, data=(sent.chat_id, sent.message_id)
-        )
 
 
 # ===================================================================
@@ -348,9 +315,6 @@ async def _edit_or_reply(query, text: str, keyboard: InlineKeyboardMarkup):
 async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Sends the welcome message and main menu, or the view requested by a deep link (/start <payload>)."""
     payload = context.args[0] if context.args else ""
-    if not is_private_chat(update):
-        await redirect_to_private(update, context, payload or "menu")
-        return
 
     message = update.message
     if payload == "browse":
@@ -393,9 +357,6 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Sends helpful usage instructions."""
-    if not is_private_chat(update):
-        await redirect_to_private(update, context, "menu")
-        return
     help_text = (
         "ℹ️ <b>Guida ai comandi del Bot della Gilda:</b>\n\n"
         "/start o /menu - Mostra il menu principale\n"
@@ -413,25 +374,16 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def cmd_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Shows the admins template."""
-    if not is_private_chat(update):
-        await redirect_to_private(update, context, "admins")
-        return
     await send_admins(update.message)
 
 
 async def cmd_ticket(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Initiates opening a ticket via command."""
-    if not is_private_chat(update):
-        await redirect_to_private(update, context, "ticket")
-        return
     await start_ticket(update.message, context)
 
 
 async def cmd_annulla(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Cancels current pending action."""
-    if not is_private_chat(update):
-        await redirect_to_private(update, context, "menu")
-        return
     if context.user_data.get("waiting_for_ticket"):
         context.user_data["waiting_for_ticket"] = False
         await update.message.reply_text(
@@ -821,6 +773,33 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
 # Main Bot Initialization
 # ===================================================================
 
+def register_handlers(app):
+    """Registers every handler on the application."""
+    # Register Error Handler
+    app.add_error_handler(error_handler)
+
+    # Register Command Handlers.
+    # In groups the bot only posts the welcome message: user commands work in private chats only,
+    # and /r (and the /welcome preview) only in the admin ticket chat. Elsewhere they are ignored.
+    private_chat = filters.ChatType.PRIVATE
+    admin_chat = filters.Chat(chat_id=config.TICKET_CHAT_ID) if config.TICKET_CHAT_ID else None
+    app.add_handler(CommandHandler("welcome", cmd_welcome, filters=(private_chat | admin_chat) if admin_chat else private_chat))
+    app.add_handler(CommandHandler(["start", "menu"], cmd_start, filters=private_chat))
+    app.add_handler(CommandHandler("help", cmd_help, filters=private_chat))
+    app.add_handler(CommandHandler(["admin", "admins"], cmd_admin, filters=private_chat))
+    app.add_handler(CommandHandler("ticket", cmd_ticket, filters=private_chat))
+    app.add_handler(CommandHandler("annulla", cmd_annulla, filters=private_chat))
+    if admin_chat:
+        app.add_handler(CommandHandler("r", cmd_admin_reply, filters=admin_chat))
+
+    # Register Callback Query Handlers
+    app.add_handler(CallbackQueryHandler(handle_callback_query))
+
+    # Register Message Handlers
+    app.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, handle_new_chat_members))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & private_chat, handle_text_message))
+
+
 def main():
     """Initializes database, sets up handlers, and starts polling."""
     # Initialize SQLite DB
@@ -842,24 +821,7 @@ def main():
     # Build Telegram Bot application
     app = ApplicationBuilder().token(config.TELEGRAM_BOT_TOKEN).build()
 
-    # Register Error Handler
-    app.add_error_handler(error_handler)
-
-    # Register Command Handlers
-    app.add_handler(CommandHandler("welcome", cmd_welcome))
-    app.add_handler(CommandHandler(["start", "menu"], cmd_start))
-    app.add_handler(CommandHandler("help", cmd_help))
-    app.add_handler(CommandHandler(["admin", "admins"], cmd_admin))
-    app.add_handler(CommandHandler("ticket", cmd_ticket))
-    app.add_handler(CommandHandler("annulla", cmd_annulla))
-    app.add_handler(CommandHandler("r", cmd_admin_reply))
-
-    # Register Callback Query Handlers
-    app.add_handler(CallbackQueryHandler(handle_callback_query))
-
-    # Register Message Handlers
-    app.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, handle_new_chat_members))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text_message))
+    register_handlers(app)
 
     logger.info("Bot starting with polling... Username configured: %s", config.BOT_USERNAME)
     app.run_polling()

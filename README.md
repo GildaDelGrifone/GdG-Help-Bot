@@ -200,7 +200,7 @@ python3 main.py
 - `/annulla` - Annulla l'operazione in corso (es. apertura ticket).
 - *Invio di testo libero:* cerca automaticamente tra le FAQ con fuzzy search.
 
-> **Nei gruppi** il bot non mostra FAQ, menu o ticket: i comandi rispondono con un pulsante *"Apri il bot in privato"* (che si autoelimina dopo 2 minuti) e i pulsanti dei menu aprono direttamente la chat privata sulla stessa pagina tramite deep link (`/start faq_<id>`, `cat_<id>`, `browse`, `ticket`, `admins`, `search`). Fanno eccezione il messaggio di benvenuto e i pulsanti dei ticket nel gruppo admin.
+> **Nei gruppi** il bot pubblica solo il messaggio di benvenuto: comandi e messaggi vengono ignorati. Gli eventuali pulsanti dei menu rimasti in un gruppo non scrivono nulla lì, ma aprono la chat privata sulla stessa pagina tramite deep link (`/start faq_<id>`, `cat_<id>`, `browse`, `ticket`, `admins`, `search`). Nel gruppo admin (`TICKET_CHAT_ID`) funzionano i pulsanti dei ticket, `/r` e `/welcome`; `/r` non funziona in nessun'altra chat.
 
 ### Per gli Admin (nel gruppo `TICKET_CHAT_ID`):
 - `[ ✅ Prendi in carico ]` - Assegna il ticket all'admin e aggiorna il badge di stato.
