@@ -1,40 +1,22 @@
 # Come partecipare
+Keywords: partecipare, giocare, venire, serata, serate, eventi, evento, tavoli, gruppo di amici, amici, senza prenotazione, presentarsi
 
-Per partecipare agli eventi, entra nel gruppo principale nel il canale degli eventi e tieni d'occhio la pubblicazione di nuovi eventi.
+Per partecipare agli eventi, entra nel canale <a href="https://t.me/Gildadelgrifonetorino">Eventi</a> e nel <a href="https://t.me/+U5NEyDvN_fMxZTQ0">gruppo della Gilda</a> e tieni d'occhio la pubblicazione di nuovi tavoli.
 
-Quando vedi un evento che ti interessa e ha posti liberi, usa i pulsanti sottostanti pre prenotare un posto.
+Quando vedi un evento che ti interessa e ha posti liberi, usa il pulsante <b>[➕ Prenota]</b> sotto il post per prenotare un posto. Le prenotazioni sono gestite da @GdG_Event_bot: per tutti i dettagli (lista d'attesa, disdetta, promemoria) consulta <i>Serate e Eventi > Come mi prenoto a un evento?</i>
+
+Per vedere al volo i prossimi appuntamenti usa <a href="https://t.me/GdG_Event_bot?start=event_next">/event_next</a>.
 
 ### Posso venire senza essere prenotato ad un evento?
 
-Assolutamente si!
+Assolutamente sì!
 
-Conta solo che a meno che non vi sia un tavolo con posti liberi, c'è l'alta probabilità di venire e non riuscire a giocare a niente, in quanto le persone tendono ad iscriversi agli eventi oppure organizzarsi in privato con il prorpio gruppo di amici.
+Considera però che, a meno che non ci sia un tavolo con posti liberi, c'è un'alta probabilità di non riuscire a giocare, perché le persone tendono a prenotarsi agli eventi oppure a organizzarsi in privato con il proprio gruppo di amici.
 
 ### Come funziona se ho un gruppo di amici e vogliamo venire a giocare?
 
-Se venite in gruppo e vi siete già organizzati tra di voi, potete venire tranquillamente in associazione e sedervi a qualsiasi tavolo. Ovviamente valgono ancora le regole classiche per i tesseramenti: ogni persona deve avere la propria tessera (a meno che non sia la prima volta che viene in Gilda).
+Se venite in gruppo e vi siete già organizzati tra di voi, potete venire tranquillamente in associazione e sedervi a qualsiasi tavolo libero. Valgono comunque le regole per il tesseramento: ogni persona deve avere la propria tessera (a meno che non sia la sua prima volta in Gilda).
 
 ### Posso proporre io un evento?
 
-Si! Per proporre un evento scrivi a uno dei Referenti Eventi e fargli sapere cosa vorresti proporre.
-
-Per velocizzare il processo, si consiglia di mandare loro gia il messaggio d'evento con questi dati:
-
-[Un immagine]
-- Titolo
-- Data
-- Sistema (se gdr)
-- Posti liberi
-- Organizzatore/Master
-- Descrizione evento
-
-Puoi anche specificare vari dettagli, come:
-
-- Durata
-- Genere
-- Adatto a neofiti (SI/NO)
-- Adatto a bambini (SI/NO)
-
-Aggiungi i dettagli che trovi siano importanti da specificare, anche se non in questa lista.
-
-Consigliamo di prendere come esempio gli eventi già pubblicati per la struttura generale. Non serve che mandi tutto formattato alla perfezione o con le varie emoji del caso! Della formattazione si occuperà in automatatico il bot che gli admin usano per pubblicare gli eventi.
+Sì! Scrivi a uno dei Referenti Eventi (<a href="https://t.me/Destard">@Destard</a> o <a href="https://t.me/ManueleAbi">@ManueleAbi</a>). Cosa mandare e come funziona la pubblicazione è spiegato in <i>Serate e Eventi > Come proporre un evento?</i>

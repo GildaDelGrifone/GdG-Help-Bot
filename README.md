@@ -65,14 +65,26 @@ GdG-Help-Bot/
 ├── faq_index.json              # File indice generato automaticamente
 ├── FAQ/                        # Cartella con le FAQ in formato Markdown
 │   ├── Cos'è la Gilda del Grifone?.md
+│   ├── Contatti e Social/
+│   │   ├── Come contattare la Gilda.md
+│   │   ├── Sito e canali social.md
+│   │   └── Voglio dare una mano.md
 │   ├── Iscrizioni e Tesseramento/
 │   │   ├── Come posso iscrivermi alla Gilda?.md
-│   │   └── Quanto costa la quota associativa?.md
-│   ├── Serate e Eventi/
-│   │   ├── Dove e quando ci troviamo?.md
-│   │   └── Posso venire anche se non conosco nessuno?.md
+│   │   └── Costi e Tessera associativa.md
+│   ├── Offerte della Gilda/
+│   │   ├── Ludoteca.md
+│   │   └── Partners.md
 │   ├── Regolamento/
 │   │   └── Regolamento dell'associazione.md
+│   ├── Serate e Eventi/
+│   │   ├── Aperture straordinarie.md
+│   │   ├── Come partecipare.md
+│   │   ├── Come prenotarsi agli eventi.md
+│   │   ├── Come proporre un evento.md
+│   │   ├── Dove e quando ci troviamo?.md
+│   │   ├── Gioco di ruolo e campagne.md
+│   │   └── Sono alle prime armi, posso venire.md
 │   └── images/
 │       └── sede_mappa.png
 ├── templates/                  # Template Markdown

@@ -1,7 +1,90 @@
 {
   "version": 1,
-  "generated_at": "2026-10-03T22:22:24.843611+00:00",
+  "generated_at": "2026-11-18T12:53:10.402055+00:00",
   "categories": [
+    {
+      "id": "a2a29bee",
+      "name": "Contatti e Social",
+      "path": "FAQ/Contatti e Social",
+      "files": [
+        {
+          "id": "a8e71272",
+          "title": "Come contattare la Gilda?",
+          "filename": "Come contattare la Gilda.md",
+          "path": "FAQ/Contatti e Social/Come contattare la Gilda.md",
+          "preview": "📧 Email: <a href=\"mailto:lagildadelgrifonetorino@gmail.com\"lagildadelgrifonetorino@gmail.com</a",
+          "keywords": [
+            "contatti",
+            "contattare",
+            "email",
+            "mail",
+            "e-mail",
+            "telefono",
+            "numero",
+            "chiamare",
+            "scrivere",
+            "direttivo",
+            "staff",
+            "presidente",
+            "referenti",
+            "ticket",
+            "assistenza",
+            "aiuto",
+            "supporto"
+          ]
+        },
+        {
+          "id": "fb88e838",
+          "title": "Sito web e canali social",
+          "filename": "Sito e canali social.md",
+          "path": "FAQ/Contatti e Social/Sito e canali social.md",
+          "preview": "Ecco dove trovare la Gilda del Grifone online:",
+          "keywords": [
+            "sito",
+            "sito web",
+            "web",
+            "link",
+            "social",
+            "telegram",
+            "gruppo",
+            "gruppi",
+            "canale",
+            "canali",
+            "chat",
+            "chiacchiere",
+            "news",
+            "notizie",
+            "serate",
+            "articoli",
+            "instagram",
+            "ig",
+            "foto",
+            "link utili"
+          ]
+        },
+        {
+          "id": "e46b4e52",
+          "title": "Voglio dare una mano: come entro nello staff?",
+          "filename": "Voglio dare una mano.md",
+          "path": "FAQ/Contatti e Social/Voglio dare una mano.md",
+          "preview": "Lo staff della Gilda è composto da volontari che aiutano il direttivo ad accogliere i nuovi arrivati, rispondere alle domande e organizzare le attività.",
+          "keywords": [
+            "volontario",
+            "volontari",
+            "volontariato",
+            "staff",
+            "aiutare",
+            "dare una mano",
+            "collaborare",
+            "contribuire",
+            "entrare nello staff",
+            "donazione",
+            "donazioni",
+            "sostenere"
+          ]
+        }
+      ]
+    },
     {
       "id": "48c89781",
       "name": "Iscrizioni e Tesseramento",
@@ -28,8 +111,13 @@
           "title": "A cosa serve la tessera?",
           "filename": "Costi e Tessera associativa.md",
           "path": "FAQ/Iscrizioni e Tesseramento/Costi e Tessera associativa.md",
-          "preview": "La quota associativa annuale della Gilda del Grifone è di <b€20</b.",
+          "preview": "La quota associativa annuale della Gilda del Grifone è di <b€20</b e la tessera è valida 365 giorni dalla data di iscrizione. Si paga in sede, in contanti o con...",
           "keywords": [
+            "rinnovo",
+            "rinnovare",
+            "scadenza",
+            "scaduta",
+            "satispay",
             "costo",
             "prezzo",
             "costi",
@@ -52,7 +140,56 @@
       "id": "2243563c",
       "name": "Offerte della Gilda",
       "path": "FAQ/Offerte della Gilda",
-      "files": []
+      "files": [
+        {
+          "id": "ff3c2c6e",
+          "title": "Ludoteca e manuali",
+          "filename": "Ludoteca.md",
+          "path": "FAQ/Offerte della Gilda/Ludoteca.md",
+          "preview": "La Gilda ha una ludoteca di <boltre 400 giochi da tavolo</b, tra grandi classici e novità. Tutti i soci possono usarli liberamente durante le serate.",
+          "keywords": [
+            "ludoteca",
+            "giochi",
+            "giochi da tavolo",
+            "catalogo",
+            "elenco giochi",
+            "lista giochi",
+            "prestito",
+            "prendere in prestito",
+            "noleggio",
+            "manuali",
+            "biblioteca",
+            "armadio",
+            "disponibile",
+            "board game"
+          ]
+        },
+        {
+          "id": "901a863f",
+          "title": "Partner e sconti per i soci",
+          "filename": "Partners.md",
+          "path": "FAQ/Offerte della Gilda/Partners.md",
+          "preview": "Con la tessera della Gilda hai diritto a sconti presso i nostri partner. Per ottenerli mostra la tessera valida (o usa il codice indicato per gli acquisti onlin...",
+          "keywords": [
+            "partner",
+            "partners",
+            "sconto",
+            "sconti",
+            "convenzione",
+            "convenzioni",
+            "collaborazioni",
+            "negozi",
+            "negozio",
+            "codice sconto",
+            "bigmanoo",
+            "arsludica",
+            "entra game cafe",
+            "magicmerchant",
+            "arcade",
+            "aces games"
+          ]
+        }
+      ]
     },
     {
       "id": "d1e9cb6c",
@@ -83,12 +220,93 @@
       "path": "FAQ/Serate e Eventi",
       "files": [
         {
+          "id": "528db909",
+          "title": "Aperture straordinarie (weekend)",
+          "filename": "Aperture straordinarie.md",
+          "path": "FAQ/Serate e Eventi/Aperture straordinarie.md",
+          "preview": "Oltre alle serate di <bLunedì, Mercoledì e Venerdì (20:45  00:00)</b, una volta al mese la Gilda apre anche per un intero weekend:",
+          "keywords": [
+            "weekend",
+            "sabato",
+            "domenica",
+            "apertura straordinaria",
+            "aperture straordinarie",
+            "fine settimana",
+            "pomeriggio",
+            "date"
+          ]
+        },
+        {
           "id": "8b46a2e0",
           "title": "Come partecipare",
           "filename": "Come partecipare.md",
           "path": "FAQ/Serate e Eventi/Come partecipare.md",
-          "preview": "Per partecipare agli eventi, entra nel gruppo principale nel il canale degli eventi e tieni d'occhio la pubblicazione di nuovi eventi.",
-          "keywords": []
+          "preview": "Per partecipare agli eventi, entra nel canale <a href=\"https://t.me/Gildadelgrifonetorino\"Eventi</a e nel <a href=\"https://t.me/+U5NEyDvNfMxZTQ0\"gruppo della Gi...",
+          "keywords": [
+            "partecipare",
+            "giocare",
+            "venire",
+            "serata",
+            "serate",
+            "eventi",
+            "evento",
+            "tavoli",
+            "gruppo di amici",
+            "amici",
+            "senza prenotazione",
+            "presentarsi"
+          ]
+        },
+        {
+          "id": "52d887ff",
+          "title": "Come mi prenoto a un evento? (GdG Event Bot)",
+          "filename": "Come prenotarsi agli eventi.md",
+          "path": "FAQ/Serate e Eventi/Come prenotarsi agli eventi.md",
+          "preview": "Le prenotazioni ai tavoli sono gestite da <b@GdGEventbot</b, il bot degli eventi della Gilda. Non serve scrivere \"prenoto\" nei commenti: basta usare i pulsanti ...",
+          "keywords": [
+            "prenotare",
+            "prenotazione",
+            "prenoto",
+            "posto",
+            "posti",
+            "tavolo",
+            "iscriversi evento",
+            "iscrizione evento",
+            "event bot",
+            "gdg_event_bot",
+            "lista d'attesa",
+            "annullare",
+            "disdire",
+            "event_next",
+            "event_mine",
+            "promemoria",
+            "eventbrite",
+            "calendario"
+          ]
+        },
+        {
+          "id": "accb3d64",
+          "title": "Come proporre un evento?",
+          "filename": "Come proporre un evento.md",
+          "path": "FAQ/Serate e Eventi/Come proporre un evento.md",
+          "preview": "Chiunque può proporre un tavolo: una partita a un gioco da tavolo, una oneshot, una campagna di ruolo, un torneo amichevole o una demo. Fare il master o l'organ...",
+          "keywords": [
+            "proporre",
+            "proposta",
+            "organizzare",
+            "organizzatore",
+            "master",
+            "dm",
+            "master gdr",
+            "creare evento",
+            "fare un tavolo",
+            "campagna",
+            "one shot",
+            "oneshot",
+            "torneo",
+            "referenti eventi",
+            "pubblicare evento"
+          ]
         },
         {
           "id": "d3f45437",
@@ -107,6 +325,54 @@
             "mappa",
             "arrivo",
             "apertura"
+          ]
+        },
+        {
+          "id": "cdbd228a",
+          "title": "Si gioca di ruolo? Come trovo una campagna?",
+          "filename": "Gioco di ruolo e campagne.md",
+          "path": "FAQ/Serate e Eventi/Gioco di ruolo e campagne.md",
+          "preview": "Sì! Il gioco di ruolo è una parte importante della Gilda: ogni settimana ci sono tavoli di sistemi diversi, sia <boneshot</b (avventure che si concludono in una...",
+          "keywords": [
+            "gioco di ruolo",
+            "giochi di ruolo",
+            "gdr",
+            "rpg",
+            "campagna",
+            "campagne",
+            "one shot",
+            "oneshot",
+            "d&d",
+            "dungeons",
+            "dungeon master",
+            "master",
+            "sistema",
+            "manuali",
+            "tavolo gdr"
+          ]
+        },
+        {
+          "id": "0e82f0b9",
+          "title": "Sono alle prime armi o non conosco nessuno: posso venire?",
+          "filename": "Sono alle prime armi, posso venire.md",
+          "path": "FAQ/Serate e Eventi/Sono alle prime armi, posso venire.md",
+          "preview": "Certo! La Gilda nasce proprio per accogliere nuovi giocatori, che tu sia un veterano o non abbia mai toccato un dado.",
+          "keywords": [
+            "principiante",
+            "principianti",
+            "neofita",
+            "neofiti",
+            "prima volta",
+            "non conosco nessuno",
+            "da solo",
+            "da sola",
+            "timido",
+            "nuovo",
+            "nuova",
+            "regole",
+            "imparare",
+            "spiegare",
+            "mai giocato"
           ]
         }
       ]
